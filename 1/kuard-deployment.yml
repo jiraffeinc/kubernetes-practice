@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kuard
+  labels:
+    app: kuard
+spec:
+  replicas: 3
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: kuard
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 10%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: kuard
+    spec:
+      containers:
+        - image: gcr.io/kuar-demo/kuard-amd64:1
+          name: kuard
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 13270
+      containers:
+        - image: gcr.io/kuar-demo/kuard-amd64:1
+          name: kuard
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthy
+              port: 8080
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 10
+            failureThreshold: 3
