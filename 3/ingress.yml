@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kuard-ingress
+spec:
+  rules:
+  - host: k8s.aaa
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: kuard-service
+          servicePort: 8080
