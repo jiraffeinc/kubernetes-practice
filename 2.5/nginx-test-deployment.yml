@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-test
+  labels:
+    app: nginx-test
+spec:
+  replicas: 3
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: nginx-test
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 10%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: nginx-test
+    spec:
+      volumes:
+        - name: nginx-test-config
+          configMap:
+            name: nginx-test-config
+      containers:
+        - image: localhost:5000/nginx-test:1
+          name: nginx-test
+          volumeMounts:
+          - name: nginx-test-config
+            mountPath: /etc/nginx/conf.d
+          ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 40
+            timeoutSeconds: 1
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 1
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 1
+
