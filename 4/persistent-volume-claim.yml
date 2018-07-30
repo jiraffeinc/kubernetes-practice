@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nginx-logs-volume-claim
+  labels:
+    app: nginx
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 1Gi
+  selector:
+    matchLabels:
+      app: nginx
+      volume: logs

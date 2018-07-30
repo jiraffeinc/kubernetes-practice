@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  containers:
+  - image: nginx:1.15-alpine
+    imagePullPolicy: IfNotPresent
+    name: nginx
+    ports:
+    - containerPort: 10402
+      protocol: TCP
+    volumeMounts:
+    - mountPath: /var/log/nginx
+      name: nginx-logs-volume
+  restartPolicy: Always
+  volumes:
+  - name: nginx-logs-volume
+    persistentVolumeClaim:
+      claimName: nginx-logs-volume-claim
